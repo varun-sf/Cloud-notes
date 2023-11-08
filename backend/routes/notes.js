@@ -16,6 +16,9 @@ res.send(notes);
     }
 
 })
+
+
+
 notesRouter.post("/addnotes",fetchuser,[ 
 body('title', "Enter a valid title").isLength({min:3}),
 body('description', 'Description must have a minimum of 5 characters').isLength({ min: 5 }),],async (req,res)=>{
@@ -38,4 +41,35 @@ try {
 })
 
 
+
+notesRouter.put("/updatenote/:id",fetchuser,async(req,res)=>{
+  const{title,description,tag} = req.body;
+  const newnote={};
+  if(title){newnote.title = title};
+  if(description){newnote.description=description};
+  if(tag){newnote.tag = tag};
+
+  const note = await Notes.findById(req.params.id);
+  if(!note){res.status(404).send("Not found")}
+
+  if(note.user.toString() !== req.user.id){
+    return res.status(401).send("Not Allowed");
+  }
+  const notedisp = await Notes.findByIdAndUpdate(req.params.id, {$set:newnote},{new:true})
+  res.send(notedisp)
+})
+
+
+notesRouter.delete("/deletenote/:id",fetchuser,async(req,res)=>{
+   
+  
+    const note = await Notes.findById(req.params.id);
+    if(!note){res.status(404).send("Not found")}
+  
+    if(note.user.toString() !== req.user.id){
+      return res.status(401).send("Not Allowed");
+    }
+    const notedisp = await Notes.findByIdAndDelete(req.params.id)
+    res.send("Successfully deleted")
+  })
 module.exports = notesRouter;
