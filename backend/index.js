@@ -1,11 +1,11 @@
 const connectTomongo = require('./db');
-const express = require('express');
+var express = require('express')
+var cors = require('cors')
 const authRouter = require('./routes/auth');
 const notesRouter = require('./routes/notes');
 const app = express()
 
-
-
+app.use(cors())
 connectTomongo();
 const port = 5000
 

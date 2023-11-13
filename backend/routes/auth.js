@@ -13,9 +13,10 @@ const JWT_SECRECT = "Varunsecret"
 authRouter.post("/create-user",[  body('name', 'Enter a valid name').isLength({ min: 3 }),
 body('email', "Enter a valid Email").isEmail(),
 body('password', 'Password must have a minimum of 5 characters').isLength({ min: 5 }),],async (req,res)=>{
+    let success = false;
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.send({"errors":result.array()})
+        return res.send({"success":success,"errors":result.array()})
     }
    
     const salt = await bcrypt.genSalt(10);
@@ -25,7 +26,7 @@ body('password', 'Password must have a minimum of 5 characters').isLength({ min:
         name: req.body.name,
         email: req.body.email,
         password: secPass
-      }).then(user=> res.send(user))
+      }).then(user=> res.send({"success":!success,user}))
       .catch(err=>res.send({"Error":err.message}));
  
     
@@ -36,9 +37,10 @@ body('password', 'Password must have a minimum of 5 characters').isLength({ min:
 authRouter.post("/login",[ 
 body('email', "Enter a valid Email").isEmail(),
 body('password', 'Password cannot be blank').exists(),],async (req,res)=>{
+    let success= false;
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(100).send({"errors":result.array()})
+        return res.status(100).send({"success": success,"errors":result.array()})
     }
    
     const {email,password} = req.body;
@@ -51,7 +53,7 @@ body('password', 'Password cannot be blank').exists(),],async (req,res)=>{
 
      const passwordCompare = await bcrypt.compare(password,user.password);
      if(!passwordCompare){
-        return res.status(400).json({error: "Please try to login with correct credentials"});
+        return res.status(400).json({"success":success,error: "Please try to login with correct credentials"});
      }
 
      const payload ={
@@ -61,8 +63,8 @@ body('password', 'Password cannot be blank').exists(),],async (req,res)=>{
      }
      const authtoken = jwt.sign(payload,JWT_SECRECT);
      res.json({
-        "Success":"You have logged in successfully",
-        "Authorisation token": authtoken
+        "success": !success,
+        "authtoken": authtoken
      })
 
     }

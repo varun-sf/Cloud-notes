@@ -1,9 +1,24 @@
-import React, {useEffect}from 'react'
-import { Link, useLocation} from 'react-router-dom'
+import React, {useState}from 'react'
+import { Link, useLocation, useNavigate} from 'react-router-dom'
 
 const Navbar = () => {
+  const navigate = useNavigate();
   let location = useLocation();
-  console.log(location);
+  // console.log(location);
+  const logout=()=>{
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
+
+  const [userColor,setUserColor] = useState("#0d6efd");
+  const changeUserColor=()=>{
+    if(userColor==="#0d6efd"){
+    setUserColor("#0a58ca");
+  }
+  else{
+    setUserColor("#0d6efd");
+  }
+  }
   return (
   
 
@@ -22,10 +37,12 @@ const Navbar = () => {
           <Link className={`nav-link ${location.pathname==="/about"?"active":""}`} to="/about">About</Link>
         </li>
       </ul>
-      <form className="d-flex" role="search">
-        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button className="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      {!localStorage.getItem("token")?
+      <form className="d-flex">     
+      <Link className="btn btn-primary mx-2" to="/login" role="button">Login</Link>
+      <Link className="btn btn-primary" to ="/signup" role="button">Signup</Link>
+      </form>:<div ><i className="fa-solid fa-user fa-xl mx-2" style={{color: userColor}}  onMouseOver={changeUserColor} onMouseLeave={changeUserColor} ></i> 
+      <button className="btn btn-primary" onClick={logout}>Logout</button></div>}
     </div>
   </div>
 </nav>

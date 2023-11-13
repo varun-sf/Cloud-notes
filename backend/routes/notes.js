@@ -8,10 +8,11 @@ const { body, validationResult } = require('express-validator');
 notesRouter.get("/fetchallnotes",fetchuser,async (req,res)=>{
     try{
 const notes = await Notes.find({user: req.user.id});
-res.send(notes);
+res.json(notes);
     }
     catch(err){
         console.log(err);
+        res.status(500).send("Internal Server Error");
 
     }
 
@@ -70,6 +71,6 @@ notesRouter.delete("/deletenote/:id",fetchuser,async(req,res)=>{
       return res.status(401).send("Not Allowed");
     }
     const notedisp = await Notes.findByIdAndDelete(req.params.id)
-    res.send("Successfully deleted")
+    res.send({"msg":"Successfully deleted"})
   })
 module.exports = notesRouter;
