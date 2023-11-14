@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
+
 const Signup = (props) => {
+ 
   const [credentials,setCredentials] = useState({name:"",email:"",password:"",cpassword:""});
    let navigate = useNavigate();
 
 const handleSubmit= async(e)=>{
     e.preventDefault();
-    console.log(JSON.stringify({name:credentials.name,email:credentials.email,password:credentials.password}))
+   
     try{
       
     const response = await fetch("http://localhost:5000/api/auth/create-user", {
@@ -20,7 +22,7 @@ const handleSubmit= async(e)=>{
      
       });
       const json = await response.json();
-      console.log(json)
+     
       if(json.success){
              localStorage.setItem("token",json.authtoken);
              props.showAlert("Account created successfully","success")

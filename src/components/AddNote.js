@@ -16,18 +16,18 @@ const AddNote = () => {
 
   return (
  
-      <div className='container my-3'>
+      <div className='container shadow p-3 mb-5 bg-body-tertiary rounded'>
       <h1>Add Notes</h1>
       <div className="mb-3">
-  <label htmlFor="title" className="form-label">Email address</label>
-  <input type="text" className="form-control" id="title" name="title" placeholder="name@example.com" onChange={onChange}/>
+  <label htmlFor="title" className="form-label">Title</label>
+  <input type="text" className="form-control" id="title" name="title" onChange={onChange}/>
 </div>
 <div className="mb-3">
-  <label htmlFor="description" className="form-label">Example textarea</label>
+  <label htmlFor="description" className="form-label">Description</label>
   <textarea className="form-control" id="description" name="description" rows="3" onChange={onChange} minLength={5} required></textarea>
 </div>
 <div className="mb-3">
-  <label htmlFor="tag" className="form-label">tag</label>
+  <label htmlFor="tag" className="form-label">Tag</label>
   <input type="text" className="form-control" id="tag" name="tag" onChange={onChange}/>
 </div>
 

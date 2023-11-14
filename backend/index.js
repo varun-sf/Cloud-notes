@@ -16,6 +16,12 @@ app.use('/api/notes',notesRouter )
 //   res.send('Hello World!')
 // })
 
+app.use('*',(req,res)=>{
+  res.status(404).json({
+      message: `${req.originalUrl}- Route not found`,
+  });
+})
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

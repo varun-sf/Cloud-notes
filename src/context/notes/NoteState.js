@@ -3,12 +3,15 @@ import noteContext from './noteContext'
 
 
 const NoteState = (props) => {
-  const url ="http://localhost:5000"
+  const url = process.env.REACT_APP_BASEURL
     const notesInitial = []
       const [notes,setNotes] = useState(notesInitial);
+      const [profile,setProfile] = useState({"name":"","email":""});
+      const [noPosts,setnoPosts] = useState(0);
   
       const getallNotes =async ()=>{
     
+        try{
        const response = await fetch(`${url}/api/notes/fetchallnotes`, {
          method: "GET", 
          headers: {
@@ -17,8 +20,12 @@ const NoteState = (props) => {
          },
        });
        const json = await response.json(); 
-       
+      setnoPosts(json.length);
       setNotes(json);
+        }
+        catch(err){
+          console.log(`Get all notes-${err}`);
+        }
       
      
    
@@ -40,7 +47,7 @@ const NoteState = (props) => {
         body: JSON.stringify({title,description,tag}), 
       });
       const json = await response.json(); 
-       getallNotes();
+        setNotes(notes.concat(json));
     }
     catch(err){
       console.log(err);
@@ -58,7 +65,7 @@ const NoteState = (props) => {
         },
 
       });
-      const json = await response.json(); 
+     
        getallNotes();
     }
     catch(err){
@@ -77,25 +84,28 @@ const NoteState = (props) => {
        
         body: JSON.stringify({title,description,tag}), 
       });
-      const json = await response.json(); 
-
-
-      for (let index = 0; index < notes.length; index++) {
-        if(notes[index]._id===id){
-          notes[index].title = title;
-          notes[index].description = description;
-          notes[index].tag = tag;
-        }
-        break;
-        
-      }
      getallNotes();
        
      }
 
 
+     const getUser = async()=>{
+      const response = await fetch(`${url}/api/auth/getuser`, {
+        method: "Get", 
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token":localStorage.getItem('token')
+        },
+      });
+
+       let json = await response.json();
+       getallNotes()
+       setProfile({"name":json.name,"email":json.email});
+     }
+
+
   return (
-      <noteContext.Provider value={{notes,addNote,deleteNote,getallNotes,editNote}}>
+      <noteContext.Provider value={{notes,noPosts,addNote,deleteNote,getallNotes,editNote,getUser,profile}}>
         {props.children}
       </noteContext.Provider>
   )

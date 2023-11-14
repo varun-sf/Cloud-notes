@@ -4,20 +4,19 @@ import NoteItem from './NoteItem';
 import AddNote from './AddNote';
 import { useNavigate } from 'react-router-dom';
 
-const Notes = () => {
+const Notes = (props) => {
   const context = useContext(noteContext);
   const { notes, getallNotes,editNote } = context;
  let navigate = useNavigate();
   useEffect(() => { 
     if(localStorage.getItem("token")){
-    console.log(localStorage.getItem("token"));
     getallNotes()
   }
-  else{
-    console.log("trying to go to login");
-  navigate("/login");
+  else{     
+    navigate("/login");
+    props.showAlert("Please login to proceed","primary")
   }
- }, [])
+ }, [getallNotes,navigate])
   
   const [note,setNote] = useState({id:"",etitle:"",edescription:"",etag:""})
   const updateNote =(currentnote)=>{
@@ -31,16 +30,13 @@ const onChange=(e)=>{
     setNote({...note,[e.target.name]:e.target.value})
 }
 
+
   return (
 
-    <div className='row my-3'>
+    <div className='row my-3' data-bs-theme={props.mode==="light"?"light":"dark"}>
       <AddNote />
-      {/* <!-- Button trigger modal --> */}
-      {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-  Launch demo modal
-</button> */}
-      {/* <!-- Modal --> */}
 
+      
       <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
@@ -51,15 +47,15 @@ const onChange=(e)=>{
             <div className="modal-body">
               {/*  */}
               <div className="mb-3">
-                <label htmlFor="title" className="form-label">Email address</label>
+                <label htmlFor="title" className="form-label">Title</label>
                 <input type="text" className="form-control" id="etitle" name="etitle" value={note.etitle}  placeholder="name@example.com" onChange={onChange} />
               </div>
               <div className="mb-3">
-                <label htmlFor="description" className="form-label">Example textarea</label>
+                <label htmlFor="description" className="form-label">Description</label>
                 <textarea className="form-control" id="edescription" name="edescription" value={note.edescription} rows="3" onChange={onChange}></textarea>
               </div>
               <div className="mb-3">
-                <label htmlFor="tag" className="form-label">tag</label>
+                <label htmlFor="tag" className="form-label">Tag</label>
                 <input type="text" className="form-control" id="etag" name="etag" value={note.etag} onChange={onChange} />
               </div>
 
